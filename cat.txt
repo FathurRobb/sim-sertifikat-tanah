@@ -1,0 +1,11 @@
+- pemohon mengisi form untuk membuat sertifikat
+- admin ngecek kelengkapannya, ada notifikasi kalo di approve ke fisik atau yuridis bahwa ada tugas, pemohon ada notif
+- nanti fisik mengupload pbt (hanya mengetahui)
+- nanti yuridis download pbt, kemudian input sertifikat
+- catatan: status di berkas sertifikat dihilangkan
+- catatan: fitur edit status berkas fisik
+- fitur chart di dashboard admin
+- fitur pemohon 
+- pas permohonan  di approve, ada fitur tracking informasi berkas itu
+- user pemohon daftar dulu (bug) -> download surat-surat, 
+- 
