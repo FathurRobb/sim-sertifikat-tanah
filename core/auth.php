@@ -28,6 +28,12 @@ if($cek > 0){
 		$_SESSION['username'] = $username;
 		$_SESSION['jabatan'] = "Fisik";
 		header("location:../user/index.php");
+	}elseif ($data['jabatan']=="Pemohon") {
+		$_SESSION['id_user'] = $data['id_user'];
+		$_SESSION['nama_lengkap'] = $data['nama_lengkap'];
+		$_SESSION['username'] = $username;
+		$_SESSION['jabatan'] = "Pemohon";
+		header("location:../pemohon/index.php");
 	}
 }else{
 	header("location:../login.php?pesan=gagal");

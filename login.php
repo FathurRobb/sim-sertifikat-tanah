@@ -42,7 +42,7 @@ if(isset($_GET['pesan'])){
             class="mt-5 shadow-sm appearance-none border rounded w-100 text-sm py-3 px-8 font-semibold bg-teal-600 text-white leading-normal"
             name="submit" type="submit" value="Masuk" onclick="validasi()" id="submit">
             <a href="pengajuan.php" class="mt-5 shadow-sm appearance-none border rounded w-100 text-sm py-3 px-8 font-semibold bg-teal-600 text-white leading-normal">Pengajuan</a>
-          <div class="text-sm text-gray-500 mt-5 underline"> Tidak memiliki akun? Hubungi Administrator </div>
+          <div class="text-sm text-gray-500 mt-5 underline"><a href="register.php">Tidak memiliki akun? Hubungi Administrator </a></div>
         </form>
       </div>
     </div>

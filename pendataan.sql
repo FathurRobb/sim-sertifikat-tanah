@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Mar 01, 2021 at 10:34 AM
--- Server version: 10.4.16-MariaDB
--- PHP Version: 7.4.12
+-- Host: 127.0.0.1
+-- Generation Time: Mar 17, 2021 at 10:02 AM
+-- Server version: 10.1.38-MariaDB
+-- PHP Version: 7.3.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -111,6 +112,30 @@ INSERT INTO `data_sertifikat` (`no_sertifikat`, `desa`, `tahun`, `nama`, `status
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pemohon_file`
+--
+
+CREATE TABLE `pemohon_file` (
+  `id_pemohon_file` int(5) NOT NULL,
+  `id_permohonan` varchar(6) NOT NULL,
+  `berita_acara` varchar(255) NOT NULL,
+  `risalah` varchar(255) NOT NULL,
+  `sktmba` varchar(255) NOT NULL,
+  `s_permohonan` varchar(255) NOT NULL,
+  `s_pernyataan` varchar(255) NOT NULL,
+  `s_riwayat_tanah` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `pemohon_file`
+--
+
+INSERT INTO `pemohon_file` (`id_pemohon_file`, `id_permohonan`, `berita_acara`, `risalah`, `sktmba`, `s_permohonan`, `s_pernyataan`, `s_riwayat_tanah`) VALUES
+(1, 'KP0001', 'KP0001_Berita Acara.doc', 'KP0001_Risalah 201B.doc', '', 'KP0001_Surat Permohonan.doc', 'KP0001_Surat Pernyataan.doc', 'KP0001_Surat Riwayat Tanah.doc');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pengajuan`
 --
 
@@ -127,7 +152,29 @@ CREATE TABLE `pengajuan` (
   `s_pernyataan` varchar(255) NOT NULL,
   `s_riwayat_tanah` varchar(255) NOT NULL,
   `status` enum('0','1','2','3') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `permohonan`
+--
+
+CREATE TABLE `permohonan` (
+  `id_permohonan` varchar(6) NOT NULL,
+  `id_user` int(5) NOT NULL,
+  `kecamatan` varchar(255) NOT NULL,
+  `desa` varchar(255) NOT NULL,
+  `alamat` text NOT NULL,
+  `status` enum('Sedang','Proses','Selesai','Batal') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `permohonan`
+--
+
+INSERT INTO `permohonan` (`id_permohonan`, `id_user`, `kecamatan`, `desa`, `alamat`, `status`) VALUES
+('KP0001', 7, 'Andir', 'dungus cariang', 'Gang Mesjid Al-Hikmah', 'Proses');
 
 -- --------------------------------------------------------
 
@@ -161,7 +208,7 @@ CREATE TABLE `user` (
   `email` varchar(50) NOT NULL,
   `nama_lengkap` varchar(50) NOT NULL,
   `jabatan` varchar(10) NOT NULL,
-  `dibuat_pada` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6)
+  `dibuat_pada` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -171,6 +218,8 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id_user`, `username`, `password`, `email`, `nama_lengkap`, `jabatan`, `dibuat_pada`) VALUES
 (1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'admin@gmail.com', 'admin', 'Admin', '2020-07-13 10:06:07.976279'),
 (2, 'fisik', 'dc16bb9cf738fa0a05bb6e8fca2f32b3', 'fisik@gmail.com', 'fisik', 'Fisik', '2020-07-13 10:06:53.640352'),
+(8, 'JoniAttack', 'e978d0bd075779e32d23a00cdbeed61d', 'joni@yahoo.co.id', 'Joni Joget', 'Pemohon', '2021-03-17 09:00:39.207705'),
+(7, 'RedHead', 'ed2bcd4deda5629174382ac5bc5473c0', 'sheeran@gmail.com', 'Ed Sheeran', 'Pemohon', '2021-03-14 15:56:07.892884'),
 (3, 'yuridis ', 'ed143029b5dfcf16faa3a0f18a07c8f1', 'yuridis@gmail.com', 'yuridis ', 'Yuridis', '2020-07-13 10:06:35.969980');
 
 --
@@ -196,10 +245,24 @@ ALTER TABLE `data_sertifikat`
   ADD PRIMARY KEY (`no_sertifikat`);
 
 --
+-- Indexes for table `pemohon_file`
+--
+ALTER TABLE `pemohon_file`
+  ADD PRIMARY KEY (`id_pemohon_file`),
+  ADD KEY `id_user` (`id_permohonan`);
+
+--
 -- Indexes for table `pengajuan`
 --
 ALTER TABLE `pengajuan`
   ADD PRIMARY KEY (`token`);
+
+--
+-- Indexes for table `permohonan`
+--
+ALTER TABLE `permohonan`
+  ADD PRIMARY KEY (`id_permohonan`),
+  ADD KEY `id_user` (`id_user`);
 
 --
 -- Indexes for table `target`
@@ -219,16 +282,38 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `pemohon_file`
+--
+ALTER TABLE `pemohon_file`
+  MODIFY `id_pemohon_file` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `target`
 --
 ALTER TABLE `target`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_user` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `pemohon_file`
+--
+ALTER TABLE `pemohon_file`
+  ADD CONSTRAINT `pemohon_file_ibfk_1` FOREIGN KEY (`id_permohonan`) REFERENCES `permohonan` (`id_permohonan`);
+
+--
+-- Constraints for table `permohonan`
+--
+ALTER TABLE `permohonan`
+  ADD CONSTRAINT `permohonan_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

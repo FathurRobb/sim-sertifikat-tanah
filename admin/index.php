@@ -22,6 +22,9 @@ $jumlahPBT = mysqli_num_rows($ambilPBT);
 
 $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
 
+$ambilNotif = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif = 'unread' ORDER BY id_permohonan ASC");
+$jumlahNotif = mysqli_num_rows($ambilNotif);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +38,45 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link href="../assets/css/style.css" rel="stylesheet" type="text/css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js" integrity="sha256-XF29CBwU1MWLaGEnsELogU6Y6rcc5nCkhhx89nFMIDQ=" crossorigin="anonymous"></script>
+    <script src="../user/assets/vendor/chart/Chart.js"></script>
+    <style type="text/css">
+    .badge {
+      top: -10px;
+      right: -10px;
+      padding: 5px 10px;
+      border-radius: 50%;
+      background-color: red;
+      color: white;
+    }
+    li.dropdown {
+      display: inline-block;
+    }
+   
+    .dropdown:hover .isi-dropdown {
+      display: block;
+    }
+   
+    .isi-dropdown a:hover {
+      color: #fff !important;
+    }
+   
+    .isi-dropdown {
+      position: absolute;
+      display: none;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      background-color: #f9f9f9;
+    }
+   
+    .isi-dropdown a {
+      color: #3c3c3c !important;
+    }
+   
+    .isi-dropdown a:hover {
+      color: #232323 !important;
+      background: #f3f3f3 !important;
+    }
+    </style>
   </head>
   <body class="bg-gray-100 font-sans leading-normal tracking-normal">
     <!--Start Navigation-->
@@ -48,6 +90,7 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
         <div class="w-1/2 pr-0">
           <div class="flex relative inline-block float-right">
             <div class="relative text-sm">
+              
               <button id="userButton" class="flex items-center focus:outline-none mr-3">
                 Hi, <?php echo $_SESSION['username'];?> </span>
                 <svg class="pl-2 h-2" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 129 129">
@@ -75,7 +118,7 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
         <div class="w-full flex-grow lg:flex lg:items-center lg:w-auto hidden lg:block mt-2 lg:mt-0 bg-white z-20" id="nav-content">
           <ul class="list-reset lg:flex flex-1 items-center px-4 md:px-0">
             <li class="mr-6 my-2 md:my-0">
-              <a href="index.html" class="block py-1 md:py-3 pl-1 align-middle text-orange-600 no-underline hover:text-gray-900 border-b-2 border-orange-600 hover:border-orange-600">
+              <a href="index.php" class="block py-1 md:py-3 pl-1 align-middle text-orange-600 no-underline hover:text-gray-900 border-b-2 border-orange-600 hover:border-orange-600">
               <i class="fas fa-home fa-fw mr-3 text-orange-600"></i><span class="pb-1 md:pb-0 text-sm">Beranda</span>
               </a>
             </li>
@@ -100,18 +143,81 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
               </a>
             </li>
             <li class="mr-6 my-2 md:my-0">
+              <a href="permohonan.php" class="block py-1 md:py-3 pl-1 align-middle text-gray-500 no-underline hover:text-gray-900 border-b-2 border-white hover:border-blue-500">
+              <i class="fa fa-file-word fa-fw mr-3"></i><span class="pb-1 md:pb-0 text-sm">Data Pemohon</span>
+              </a>
+            </li>
+            <li class="mr-6 my-2 md:my-0">
               <a href="target.php" class="block py-1 md:py-3 pl-1 align-middle text-gray-500 no-underline hover:text-gray-900 border-b-2 border-white hover:border-yellow-500">
               <i class="fa fa-check fa-fw mr-3"></i><span class="pb-1 md:pb-0 text-sm">Target</span>
               </a>
+            </li>
+            <li class="dropdown mr-6 my-2 md:my-0">
+              <a href="#" class="block py-1 md:py-3 pl-1 align-middle text-gray-500 no-underline hover:text-gray-900 border-b-2 border-white">
+              <i class="fa fa-bell fa-fw mr-3"></i><span class="pb-1 md:pb-0 text-sm">Notifikasi <span class="badge"><?php echo $jumlahNotif;?></span></span>
+              </a>
+                  <ul class="isi-dropdown">
+                    <?php  
+                      if (count(array($ambilNotif))>0) {
+                        foreach (($ambilNotif) as $i) {
+                        $id_user = $i['id_user'];
+                        $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+                        while ($row = $nama->fetch_assoc()) { 
+                    ?>
+                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>"><b><?=$row['nama_lengkap'];?><br></b> Membuat Permohonan Baru</a></li><hr>
+                  <?php } ?>
+                    <?php
+                      }  
+                     }else{
+                         echo "<li><a>Tidak ada data baru.</a></li>";
+                     }
+                     ?>
+                  </ul>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+    <?php
+      while($d = mysqli_fetch_array($ambilTarget)){
+    ?>
+    <?php
+      $jumlah = $d['target'] - $jumlahFisik;
+    ?>
     <!--Stop Navigation-->
     <!--Container-->
     <div class="container w-full mx-auto pt-20">
       <div class="w-full px-4 md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
+              <canvas id="inicanvas"></canvas>
+    <script>
+ 
+        var ctx = document.getElementById("inicanvas").getContext("2d");
+        // tampilan chart
+        var piechart = new Chart(ctx,{type: 'pie',
+          data : {
+        // label nama setiap Value
+        labels:[
+                  'Total Pengguna',
+                  'Total Target',
+                  'Target Tercapai',
+                  'Target Belum Tercapai'
+          ],
+        datasets: [{
+          // Jumlah Value yang ditampilkan
+           data:[60,60,60,80],
+           data:[<?php echo $jumlahUser;?>,<?=$d['target'];?>,<?=$jumlahFisik?>,<?=$jumlah;?>],
+ 
+          backgroundColor:[
+                 'rgba(221, 107, 32, 1)',
+                 'rgba(49, 130, 206, 1)',
+                 'rgba(128, 90, 213, 1)',
+                 'rgba(49, 151, 149, 1)'
+                 ]
+        }],
+        }
+        });
+ 
+    </script>
         <!--Console Content-->
         <div class="flex flex-wrap">
         <!--Metric Card-->
@@ -131,9 +237,7 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
         <!--Metric Card-->
         <!--Metric Card-->
         <div class="w-full md:w-1/2 xl:w-1/2 p-3">
-        <?php
-                while($d = mysqli_fetch_array($ambilTarget)){
-              ?>
+        
             <div class="bg-white border rounded shadow p-2">
               <div class="flex flex-row items-center">
                 <div class="flex-shrink pr-4">
@@ -170,17 +274,15 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
                   <div class="rounded p-3 bg-teal-600"><i class="fas fa-table fa-2x fa-fw fa-inverse"></i></div>
                 </div>
                 <div class="flex-1 text-right md:text-center">
-                <?php
-                $jumlah = $d['target'] - $jumlahFisik;
-                ?>
+                
                   <h5 class="font-bold uppercase text-gray-500">Target Belum Tercapai</h5>
                   <h3 class="font-bold text-3xl"><?=$jumlah;?><span class="text-orange-500"></span></h3>
                 </div>
               </div>
             </div>
           </div>
-          <?php } ?>
         <!--Metric Card-->
+          <?php } ?>        
         </div>
 
         <!--Divider-->
@@ -217,6 +319,8 @@ $ambilTarget = mysqli_query($connection, "SELECT * FROM target");
         </div>
         </div>
     <!--/container-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script>
       /*Toggle dropdown list*/
       /*https://gist.github.com/slavapas/593e8e50cf4cc16ac972afcbad4f70c8*/

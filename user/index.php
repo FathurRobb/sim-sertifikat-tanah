@@ -1,8 +1,10 @@
 <?php
+include '../core/conn.php';
 session_start();
 if ($_SESSION['jabatan']=="") {
 	header('location:../login.php?pesan=gagal');
 }
+	$data = mysqli_query($connection, "SELECT * FROM permohonan");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +19,8 @@ if ($_SESSION['jabatan']=="") {
 	<link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/vendor/linearicons/style.css">
 	<link rel="stylesheet" href="assets/vendor/chartist/css/chartist-custom.css">
+	<link rel="stylesheet" href="../user/assets/vendor/datatables/dataTables.bootstrap4.css">
+	<link rel="stylesheet" href="../user/assets/vendor/datatables/dataTables.bootstrap4.min.css">
 	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="assets/css/main.css">
 	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
@@ -116,6 +120,49 @@ if ($_SESSION['jabatan']=="") {
 			</div>
 			<!-- END MAIN CONTENT -->
 		</div>
+		<div class="container">
+				<div class="panel panel-primary">
+					<div class="panel-heading text-center"><h3><b>Data Permohonan</b></h3></div>
+					<div class="panel-body">
+						<table class="table table-bordered" id="dataTables" cellspacing="0" width="100%">
+							<thead style="background: #f3f5f8">
+								<tr style="text-align:center;">
+									<th style="text-align:center;width:10px;">No</th>
+									<th style="text-align: center;">ID</th>
+									<th style="text-align: center;">Nama Pemohon</th>
+									<th style="text-align: center;">Kecamatan</th>
+									<th style="text-align: center;">Desa</th>
+									<th style="text-align: center;">Alamat</th>
+									<th style="text-align: center;">Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								  $no = 0;
+					              while($d = mysqli_fetch_array($data)){
+					              	$no++;
+					            ?>
+					              <?php  
+					              	$id_user = $d['id_user'];
+					              	$nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+					              	while ($row = $nama->fetch_assoc()) {
+					              ?>
+					            <tr>
+					            	<td style="text-align: center;"><?php echo $no; ?></td>
+					            	<td style="text-align: center;"><?=$d['id_permohonan'];?></td>
+					            	<td style="text-align: center;"><?=$row['nama_lengkap'];?></td>
+					            	<td style="text-align: center;"><?=$d['kecamatan'];?></td>
+					            	<td style="text-align: center;"><?=$d['desa'];?></td>
+					            	<td style="text-align: center;"><?=$d['alamat'];?></td>
+					            	<td style="text-align: center;"><?=$d['status'];?></td>
+					            </tr>
+					        <?php } ?>
+					        <?php } ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		<!-- END MAIN -->
 	</div>
 	<!-- END WRAPPER -->
@@ -126,6 +173,15 @@ if ($_SESSION['jabatan']=="") {
 	<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 	<script src="assets/vendor/chartist/js/chartist.min.js"></script>
 	<script src="assets/scripts/klorofil-common.js"></script>
+	<script src="../user/assets/vendor/datatables/jquery.dataTables.js"></script>
+	<script src="../user/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+	<script src="../user/assets/vendor/datatables/dataTables.bootstrap4.js"></script>
+	<script src="../user/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('#dataTables').DataTable();
+		} );
+	</script>
 	<script>
 	$(function() {
 		var data, options;

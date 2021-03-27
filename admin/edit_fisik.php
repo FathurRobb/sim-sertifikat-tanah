@@ -9,8 +9,11 @@ if($_SESSION['jabatan']==""){
   header('location:../core/403.php');
 }
 
+$ambilNotif = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif = 'unread' ORDER BY id_permohonan ASC");
+$jumlahNotif = mysqli_num_rows($ambilNotif);
 $no_berkas = $_GET['no_berkas'];
 $data = mysqli_query($connection,"SELECT * FROM data_fisik where no_berkas='$no_berkas'");
+
 
 if (isset($_POST['update'])) {
 	$desa = filter_input(INPUT_POST, 'desa', FILTER_SANITIZE_STRING);
@@ -41,6 +44,44 @@ if (isset($_POST['update'])) {
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link href="../assets/css/style.css" rel="stylesheet" type="text/css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js" integrity="sha256-XF29CBwU1MWLaGEnsELogU6Y6rcc5nCkhhx89nFMIDQ=" crossorigin="anonymous"></script>
+    <style type="text/css">
+    .badge {
+      top: -10px;
+      right: -10px;
+      padding: 5px 10px;
+      border-radius: 50%;
+      background-color: red;
+      color: white;
+    }
+    li.dropdown {
+      display: inline-block;
+    }
+   
+    .dropdown:hover .isi-dropdown {
+      display: block;
+    }
+   
+    .isi-dropdown a:hover {
+      color: #fff !important;
+    }
+   
+    .isi-dropdown {
+      position: absolute;
+      display: none;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      background-color: #f9f9f9;
+    }
+   
+    .isi-dropdown a {
+      color: #3c3c3c !important;
+    }
+   
+    .isi-dropdown a:hover {
+      color: #232323 !important;
+      background: #f3f3f3 !important;
+    }
+    </style>
   </head>
 
   <style>
@@ -121,9 +162,36 @@ if (isset($_POST['update'])) {
               </a>
             </li>
             <li class="mr-6 my-2 md:my-0">
+              <a href="permohonan.php" class="block py-1 md:py-3 pl-1 align-middle text-gray-500 no-underline hover:text-gray-900 border-b-2 border-white hover:border-blue-500">
+              <i class="fa fa-file-word fa-fw mr-3"></i><span class="pb-1 md:pb-0 text-sm">Data Pemohon</span>
+              </a>
+            </li>
+            <li class="mr-6 my-2 md:my-0">
               <a href="target.php" class="block py-1 md:py-3 pl-1 align-middle text-gray-500 no-underline hover:text-gray-900 border-b-2 border-white hover:border-yellow-500">
               <i class="fa fa-check fa-fw mr-3"></i><span class="pb-1 md:pb-0 text-sm">Target</span>
               </a>
+            </li>
+            <li class="dropdown mr-6 my-2 md:my-0">
+              <a href="#" class="block py-1 md:py-3 pl-1 align-middle text-gray-500 no-underline hover:text-gray-900 border-b-2 border-white">
+              <i class="fa fa-bell fa-fw mr-3"></i><span class="pb-1 md:pb-0 text-sm">Notifikasi <span class="badge"><?php echo $jumlahNotif;?></span></span>
+              </a>
+                  <ul class="isi-dropdown">
+                    <?php  
+                      if (count(array($ambilNotif))>0) {
+                        foreach (($ambilNotif) as $i) {
+                        $id_user = $i['id_user'];
+                        $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+                        while ($row = $nama->fetch_assoc()) { 
+                    ?>
+                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>"><b><?=$row['nama_lengkap'];?><br></b> Membuat Permohonan Baru</a></li><hr>
+                  <?php } ?>
+                    <?php
+                      }  
+                     }else{
+                         echo "<li><a>Tidak ada data baru.</a></li>";
+                     }
+                     ?>
+                  </ul>
             </li>
           </ul>
         </div>
