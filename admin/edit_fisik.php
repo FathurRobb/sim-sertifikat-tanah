@@ -183,7 +183,9 @@ if (isset($_POST['update'])) {
                         $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
                         while ($row = $nama->fetch_assoc()) { 
                     ?>
-                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>"><b><?=$row['nama_lengkap'];?><br></b> Membuat Permohonan Baru</a></li><hr>
+                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
+                      <small><i><?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small><br/>
+                      <b><?=$row['nama_lengkap'];?></b> Membuat Permohonan Baru</a></li><hr>
                   <?php } ?>
                     <?php
                       }  
@@ -226,8 +228,8 @@ if (isset($_POST['update'])) {
 
                 <label for="status" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Status</label>
 									<select class="mt-1 inline-block bg-gray-200 focus:border-green-500 focus:border-6 shadow-sm appearance-none border rounded w-full py-2 px-3 text-sm text-gray-700 leading-normal focus:outline-none mb-4" name="status">
-										<option value="Selesai">Selesai</option>
-										<option value="Belum">Belum</option>
+										<option value="Selesai"<?php if($d['status']=="Selesai") echo 'selected="selected"'; ?>>Selesai</option>
+										<option value="Belum"<?php if($d['status']=="Belum") echo 'selected="selected"'; ?>>Belum</option>
 									</select>
 
                 <label for="tahun" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Tahun</label>

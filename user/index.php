@@ -4,7 +4,7 @@ session_start();
 if ($_SESSION['jabatan']=="") {
 	header('location:../login.php?pesan=gagal');
 }
-	$data = mysqli_query($connection, "SELECT * FROM permohonan");
+	$data = mysqli_query($connection, "SELECT p.id_permohonan, p.id_user, p.desa, p.kecamatan, p.alamat, p.status, p.notif, p.date_created, pf.berita_acara, pf.risalah, pf.sktbma, pf.s_permohonan, pf.s_pernyataan, pf.s_riwayat_tanah FROM permohonan AS p INNER JOIN pemohon_file AS pf ON p.id_permohonan = pf.id_permohonan");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -134,6 +134,7 @@ if ($_SESSION['jabatan']=="") {
 									<th style="text-align: center;">Desa</th>
 									<th style="text-align: center;">Alamat</th>
 									<th style="text-align: center;">Status</th>
+									<th style="text-align: center;">Aksi</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -155,7 +156,70 @@ if ($_SESSION['jabatan']=="") {
 					            	<td style="text-align: center;"><?=$d['desa'];?></td>
 					            	<td style="text-align: center;"><?=$d['alamat'];?></td>
 					            	<td style="text-align: center;"><?=$d['status'];?></td>
+					            	<td style="text-align: center;"><a href="#" type="button" class="btn btn-xs btn-success" title="detail" data-toggle="modal" data-target="#ModalDetail<?=$d['id_permohonan'];?>"><i class="fa fa-edit fa-fw fa-2x"></i></a></td>
 					            </tr>
+					            <!--MODAL Detail-->
+							    <div class="modal fade" id="ModalDetail<?=$d['id_permohonan'];?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" ari-hidden="true">
+							        <div class="modal-dialog">
+							            <div class="modal-content">
+							                <div class="modal-header">
+							                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+							                    <h3 class="modal-title" id="myModalLabel">Detail Permohonan</h3>
+							                </div>
+              								&nbsp&nbsp&nbsp<small> Tanggal Pembuatan Permohonan <?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($d['date_created'])); echo " WIB";?></small>
+							                <form class="form-horizontal">
+							                    <div class="modal-body">
+							                        <div class="form-group form-inline">
+							                            <label class="col-xs-3">Nama Pemohon</label>
+							                                <input type="text" name="nama_lengkap" value="<?=$row['nama_lengkap'];?>" class="form-control" size="50" readonly/>
+							                        </div>
+							                        <div class="form-group form-inline">
+							                            <label class="col-xs-3">Kecamatan</label>
+							                                <input type="text" name="kecamatan" value="<?=$d['kecamatan'];?>" class="form-control" size="50" readonly/>
+							                        </div>
+							                        <div class="form-group form-inline">
+							                            <label class="col-xs-3">Desa</label>
+							                                <input type="text" name="desa" value="<?=$d['desa'];?>" class="form-control" size="50" readonly/>
+							                        </div>
+							                        <div class="form-group form-inline">
+							                            <label class="col-xs-3">Alamat</label>
+							                                <textarea type="text" name="alamat" class="form-control" cols="48"readonly><?=$d['alamat'];?></textarea>
+							                        </div>
+							                        <div class="form-group form-inline">
+							                            <label class="col-xs-3">Status</label>
+							                                <input type="text" name="status" value="<?=$d['status'];?>" class="form-control" size="50" disabled/>
+							                        </div>
+							                        <div class="form-group">
+                										<a style="width: 100%" class="btn btn-xs btn-success" id="berita_acara" name="berita_acara" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['berita_acara'];?>"><i class="fa fa-download"> Download File Berita Acara </i></a>
+							                        </div>
+							                        <div class="form-group">
+                										<a style="width: 100%" class="btn btn-xs btn-success" id="risalah" name="risalah" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['risalah'];?>"><i class="fa fa-download"> Download File Risalah </i></a>
+							                        </div>
+							                        <div class="form-group">
+                										<a style="width: 100%" class="btn btn-xs btn-success" id="sktbma" name="sktbma" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['sktbma'];?>"><i class="fa fa-download"> Download File SKTBMA </i></a>
+							                        </div>
+							                        <div class="form-group">
+                										<a style="width: 100%" class="btn btn-xs btn-success" id="s_permohonan" name="s_permohonan" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_permohonan'];?>"><i class="fa fa-download"> Download File Surat Permohonan </i></a>
+							                        </div>
+							                        <div class="form-group">
+                										<a style="width: 100%" class="btn btn-xs btn-success" id="s_pernyataan" name="s_pernyataan" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_pernyataan'];?>"><i class="fa fa-download"> Download File Surat Pernyataan </i></a>
+							                        </div>
+							                        <div class="form-group">
+                										<a style="width: 100%" class="btn btn-xs btn-success" id="s_riwayat_tanah" name="s_riwayat_tanah" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_riwayat_tanah'];?>"><i class="fa fa-download"> Download File Surat Riwayat Tanah </i></a>
+							                        </div>
+							                    </div>
+							                    
+
+							                    <div class="modal-footer">
+							                        <button class="btn btn-info" data-dismiss="modal" aria-hidden="true">OK</button>
+							                    </div>
+							                </form>
+							            </div>
+							        </div>
+							    </div>
+
+						    <!--END MODAL DETAIL-->
+
 					        <?php } ?>
 					        <?php } ?>
 							</tbody>
@@ -164,6 +228,7 @@ if ($_SESSION['jabatan']=="") {
 				</div>
 			</div>
 		<!-- END MAIN -->
+		
 	</div>
 	<!-- END WRAPPER -->
 	<!-- Javascript -->

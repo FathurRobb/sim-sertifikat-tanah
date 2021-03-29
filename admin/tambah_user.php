@@ -164,7 +164,9 @@ if (isset($_GET['pesan'])) {
                         $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
                         while ($row = $nama->fetch_assoc()) { 
                     ?>
-                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>"><b><?=$row['nama_lengkap'];?><br></b> Membuat Permohonan Baru</a></li><hr>
+                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
+                      <small><i><?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small><br/>
+                      <b><?=$row['nama_lengkap'];?></b> Membuat Permohonan Baru</a></li><hr>
                   <?php } ?>
                     <?php
                       }  

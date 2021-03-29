@@ -10,7 +10,7 @@
 $ambilNotif = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif = 'unread' ORDER BY id_permohonan ASC");
 $jumlahNotif = mysqli_num_rows($ambilNotif);
 $id_permohonan = $_GET['id_permohonan'];
-$data = mysqli_query($connection, "SELECT p.id_permohonan, p.id_user, p.desa, p.kecamatan, p.alamat, p.status, p.notif, pf.berita_acara, pf.risalah, pf.sktbma, pf.s_permohonan, pf.s_pernyataan, pf.s_riwayat_tanah FROM permohonan AS p INNER JOIN pemohon_file AS pf ON p.id_permohonan = pf.id_permohonan WHERE p.id_permohonan='$id_permohonan'");
+$data = mysqli_query($connection, "SELECT p.id_permohonan, p.id_user, p.desa, p.kecamatan, p.alamat, p.status, p.notif, p.date_created, pf.berita_acara, pf.risalah, pf.sktbma, pf.s_permohonan, pf.s_pernyataan, pf.s_riwayat_tanah FROM permohonan AS p INNER JOIN pemohon_file AS pf ON p.id_permohonan = pf.id_permohonan WHERE p.id_permohonan='$id_permohonan'");
 
 if(isset($_POST['update'])){
   $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
@@ -93,7 +93,7 @@ if(isset($_POST['update'])){
       text-decoration: none;
       cursor: pointer;
       border-radius: 4px;
-      width: 50%;
+      width: 100%;
     }
     .button:hover {opacity: 1}
 
@@ -186,7 +186,9 @@ if(isset($_POST['update'])){
                         $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
                         while ($row = $nama->fetch_assoc()) { 
                     ?>
-                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>"><b><?=$row['nama_lengkap'];?><br></b> Membuat Permohonan Baru</a></li><hr>
+                    <li><a href="edit_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
+                      <small><i><?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small><br/>
+                      <b><?=$row['nama_lengkap'];?></b> Membuat Permohonan Baru</a></li><hr>
                   <?php } ?>
                     <?php
                       }  
@@ -216,6 +218,7 @@ if(isset($_POST['update'])){
                 $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
                 while ($row = $nama->fetch_assoc()) {
               ?>
+              <small><i>Tanggal Pembuatan Permohonan <?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small>
               <form action="" method="POST" class="bg-white rounded mt-4">
 
                 <label for="id_permohonan" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">ID Permohonan</label>
@@ -229,17 +232,17 @@ if(isset($_POST['update'])){
                 <label for="alamat" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Alamat</label>
                 <textarea disabled id="alamat" autocomplete=off type="text" class="mt-1 inline-block bg-gray-300 focus:border-green-500 focus:border-6 shadow-sm appearance-none border rounded w-full py-2 px-3 text-sm text-gray-700 leading-normal focus:outline-none mb-4"name="alamat"><?=$d['alamat'];?></textarea>
                 <label for="berita_acara" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Berita Acara</label>
-                <button class="button" id="berita_acara" name="berita_acara"><i class="fas fa-download"><a href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['berita_acara'];?>"> Download File Berita Acara </a></i></button>
+                <a class="button" id="berita_acara" name="berita_acara" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['berita_acara'];?>"><i class="fas fa-download"> Download File Berita Acara </i></a>
                 <label for="risalah" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Risalah</label>
-                <button class="button" id="risalah" name="risalah"><i class="fas fa-download"><a href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['risalah'];?>"> Download File Risalah </a></i></button>
+                <a class="button" id="risalah" name="risalah" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['risalah'];?>"><i class="fas fa-download"> Download File Risalah </i></a>
                 <label for="sktbma" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">SKTBMA</label>
-                <button class="button" id="sktbma" name="sktbma"><i class="fas fa-download"><a href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['sktbma'];?>"> Download File SKTBMA </a></i></button>
+                <a class="button" id="sktbma" name="sktbma" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['sktbma'];?>"><i class="fas fa-download"> Download File SKTBMA </i></a>
                 <label for="s_permohonan" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Surat Permohonan</label>
-                <button class="button" id="s_permohonan" name="s_permohonan"><i class="fas fa-download"><a href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_permohonan'];?>"> Download File Surat Permohonan </a></i></button>
+                <a class="button" id="s_permohonan" name="s_permohonan" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_permohonan'];?>"><i class="fas fa-download"> Download File Surat Permohonan </i></a>
                 <label for="s_pernyataan" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Surat Pernyataan</label>
-                <button class="button" id="s_pernyataan" name="s_pernyataan"><i class="fas fa-download"><a href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_pernyataan'];?>"> Download File Surat Pernyataan </a></i></button>
+                <a class="button" id="s_pernyataan" name="s_pernyataan" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_pernyataan'];?>"><i class="fas fa-download"> Download File Surat Pernyataan </i></a>
                 <label for="s_riwayat_tanah" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Surat Riwayat Tanah</label>
-                <button class="button" id="s_riwayat_tanah" name="s_riwayat_tanah"><i class="fas fa-download"><a href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_riwayat_tanah'];?>"> Download File Surat Riwayat Tanah </a></i></button>
+                <a class="button" id="s_riwayat_tanah" name="s_riwayat_tanah" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_riwayat_tanah'];?>"><i class="fas fa-download"> Download File Surat Riwayat Tanah </i></a>
                 <label for="status" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Status</label>
                 <select name="status" id="status" class="mt-1 inline-block bg-gray-300 focus:border-green-500 focus:border-6 shadow-sm appearance-none border rounded w-full py-2 px-3 text-sm text-gray-700 leading-normal focus:outline-none mb-4">
                     <option value="Belum Di Setujui" <?php if($d['status']=="Belum Di Setujui") echo 'selected="selected"'; ?>>Belum Di Setujui</option>
