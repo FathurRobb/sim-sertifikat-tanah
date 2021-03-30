@@ -4,6 +4,10 @@ session_start();
 if ($_SESSION['jabatan']=="") {
 	header('location:../login.php?pesan=gagal');
 }
+	$ambilNF = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif_fisik = 'unread' ORDER BY id_permohonan ASC");
+  	$jumlahNF = mysqli_num_rows($ambilNF);
+	$ambilNY = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif_yuridis = 'unread' ORDER BY id_permohonan ASC");
+  	$jumlahNY = mysqli_num_rows($ambilNY);
 	$data = mysqli_query($connection, "SELECT p.id_permohonan, p.id_user, p.desa, p.kecamatan, p.alamat, p.status, p.notif, p.date_created, pf.berita_acara, pf.risalah, pf.sktbma, pf.s_permohonan, pf.s_pernyataan, pf.s_riwayat_tanah FROM permohonan AS p INNER JOIN pemohon_file AS pf ON p.id_permohonan = pf.id_permohonan");
 ?>
 <!DOCTYPE html>
@@ -46,6 +50,56 @@ if ($_SESSION['jabatan']=="") {
 				</div>
 				<div id="navbar-menu">
 					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <span>Notifikasi <span class="badge">
+								<?php
+								if ($_SESSION['jabatan']=="Fisik") {
+							 		echo $jumlahNF;
+								}elseif ($_SESSION['jabatan']=="Yuridis") {
+									echo $jumlahNY;
+								}
+							 ?></span></span></a>
+							<ul class="dropdown-menu">
+								<?php
+								if ($_SESSION['jabatan']=="Fisik") {
+							 		if (count(array($ambilNF))>0) {
+				                        foreach (($ambilNF) as $i) {
+				                        $id_user = $i['id_user'];
+				                        $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+				                        while ($row = $nama->fetch_assoc()) { 
+			                    ?>
+			                    <li><a href="detail_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
+			                      <small><i><?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small><br/>
+			                      <b><?=$row['nama_lengkap'];?></b> Membuat Permohonan Baru</a></li><hr>
+			                      	<?php } ?>
+			                      	 <?php
+				                      }  
+				                     }else{
+				                         echo "<li><a>Tidak ada data baru.</a></li>";
+				                     }
+				                     ?>
+			                    <?php
+								}elseif($_SESSION['jabatan']=="Yuridis") {
+							 		if (count(array($ambilNY))>0) {
+				                        foreach (($ambilNY) as $i) {
+				                        $id_user = $i['id_user'];
+				                        $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+				                        while ($row = $nama->fetch_assoc()) { 
+								
+							 	?>
+			                    <li><a href="detail_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
+			                      <small><i><?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small><br/>
+			                      <b><?=$row['nama_lengkap'];?></b> Membuat Permohonan Baru</a></li><hr>
+			                      	<?php } ?>
+			                      	 <?php
+				                      }  
+				                     }else{
+				                         echo "<li><a>Tidak ada data baru.</a></li>";
+				                     }
+				                     ?>
+				                 <?php } ?>
+							</ul>
+						</li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="lnr lnr-question-circle"></i> <span>Bantuan</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
 							<ul class="dropdown-menu">
@@ -156,9 +210,9 @@ if ($_SESSION['jabatan']=="") {
 					            	<td style="text-align: center;"><?=$d['desa'];?></td>
 					            	<td style="text-align: center;"><?=$d['alamat'];?></td>
 					            	<td style="text-align: center;"><?=$d['status'];?></td>
-					            	<td style="text-align: center;"><a href="#" type="button" class="btn btn-xs btn-success" title="detail" data-toggle="modal" data-target="#ModalDetail<?=$d['id_permohonan'];?>"><i class="fa fa-edit fa-fw fa-2x"></i></a></td>
+					            	<td style="text-align: center;"><a href="detail_permohonan.php?id_permohonan=<?=$d['id_permohonan'];?>" type="button" class="btn btn-xs btn-success" title="detail"><i class="fa fa-edit fa-fw fa-2x"></i></a></td>
 					            </tr>
-					            <!--MODAL Detail-->
+					            <!--MODAL Detail
 							    <div class="modal fade" id="ModalDetail<?=$d['id_permohonan'];?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" ari-hidden="true">
 							        <div class="modal-dialog">
 							            <div class="modal-content">
@@ -218,7 +272,7 @@ if ($_SESSION['jabatan']=="") {
 							        </div>
 							    </div>
 
-						    <!--END MODAL DETAIL-->
+						    END MODAL DETAIL-->
 
 					        <?php } ?>
 					        <?php } ?>

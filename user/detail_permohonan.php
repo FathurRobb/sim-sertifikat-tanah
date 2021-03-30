@@ -1,35 +1,19 @@
 <?php
-session_start();
 include '../core/conn.php';
+session_start();
+$id_permohonan = $_GET['id_permohonan'];
 if ($_SESSION['jabatan']=="") {
 	header('location:../login.php?pesan=gagal');
+}elseif ($_SESSION['jabatan']=="Fisik") {
+	mysqli_query($connection,"UPDATE permohonan SET notif_fisik='read' WHERE id_permohonan='$id_permohonan'");
+}elseif ($_SESSION['jabatan']=="Yuridis") {
+	mysqli_query($connection,"UPDATE permohonan SET notif_yuridis='read' WHERE id_permohonan='$id_permohonan'");
 }
 	$ambilNF = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif_fisik = 'unread' ORDER BY id_permohonan ASC");
   	$jumlahNF = mysqli_num_rows($ambilNF);
 	$ambilNY = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif_yuridis = 'unread' ORDER BY id_permohonan ASC");
   	$jumlahNY = mysqli_num_rows($ambilNY);
-
-$ambildata = mysqli_query($connection,"SELECT data_fisik.nama, data_fisik.desa, data_fisik.no_sertifikat, data_fisik.tahun, data_fisik.no_hak, data_fisik.no_berkas FROM data_fisik INNER JOIN data_sertifikat ON data_sertifikat.no_sertifikat = data_fisik.no_sertifikat");
-$jumlahdata = mysqli_num_rows($ambildata);
-$data = mysqli_query($connection, "SELECT * FROM data_fisik");
-
-if(isset($_GET['submit'])){
-	$no_berkas = $_GET['no_berkas'];
-	$desa = $_GET['desa'];
-	$query = mysqli_query($connection, "SELECT * FROM data_fisik WHERE no_berkas LIKE '%".$no_berkas."%' AND desa LIKE '%".$desa."%'");
-	$hasil = mysqli_fetch_array($query);
-	$nama = $hasil['nama'];
-	$desa = $hasil['desa'];
-	$status = $hasil['status'];
-	$no_hak = $hasil['no_hak'];
-	$no_sertifikat = $hasil['no_sertifikat'];
-}else{
-	$nama = "";
-	$desa = "";
-	$status = "";
-	$no_hak = "";
-	$no_sertifikat = "";
-}
+	$data = mysqli_query($connection, "SELECT p.id_permohonan, p.id_user, p.desa, p.kecamatan, p.alamat, p.status, p.notif, p.date_created, pf.berita_acara, pf.risalah, pf.sktbma, pf.s_permohonan, pf.s_pernyataan, pf.s_riwayat_tanah FROM permohonan AS p INNER JOIN pemohon_file AS pf ON p.id_permohonan = pf.id_permohonan WHERE p.id_permohonan='$id_permohonan'");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,6 +28,8 @@ if(isset($_GET['submit'])){
 	<link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/vendor/linearicons/style.css">
 	<link rel="stylesheet" href="assets/vendor/chartist/css/chartist-custom.css">
+	<link rel="stylesheet" href="../user/assets/vendor/datatables/dataTables.bootstrap4.css">
+	<link rel="stylesheet" href="../user/assets/vendor/datatables/dataTables.bootstrap4.min.css">
 	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="assets/css/main.css">
 	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
@@ -61,7 +47,7 @@ if(isset($_GET['submit'])){
 		<!-- NAVBAR -->
 		<nav class="navbar navbar-default navbar-fixed-top">
 			<div class="brand">
-				<a href="index.php"><b>PENGUMPULAN DATA SERTIFIKAT </b><br> <center> KABUPATEN BANDUNG </center></a>
+				<a href="index.php" class="logo"><b>PENGUMPULAN DATA SERTIFIKAT </b><br> <center> KABUPATEN BANDUNG </center></a>
 			</div>
 			<div class="container-fluid">
 				<div class="navbar-btn">
@@ -84,8 +70,8 @@ if(isset($_GET['submit'])){
 							 		if (count(array($ambilNF))>0) {
 				                        foreach (($ambilNF) as $i) {
 				                        $id_user = $i['id_user'];
-				                        $nama2 = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
-				                        while ($row = $nama2->fetch_assoc()) { 
+				                        $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+				                        while ($row = $nama->fetch_assoc()) { 
 			                    ?>
 			                    <li><a href="detail_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
 			                      <small><i><?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small><br/>
@@ -102,8 +88,8 @@ if(isset($_GET['submit'])){
 							 		if (count(array($ambilNY))>0) {
 				                        foreach (($ambilNY) as $i) {
 				                        $id_user = $i['id_user'];
-				                        $nama2 = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
-				                        while ($row = $nama2->fetch_assoc()) { 
+				                        $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+				                        while ($row = $nama->fetch_assoc()) { 
 								
 							 	?>
 			                    <li><a href="detail_permohonan.php?id_permohonan=<?=$i['id_permohonan'];?>">
@@ -142,8 +128,8 @@ if(isset($_GET['submit'])){
 			<div class="sidebar-scroll">
 				<nav>
 					<ul class="nav">
-						<li><a href="index.php" class=""><i class="lnr lnr-home"></i> <span>Beranda</span></a></li>
-						<li><a href="informasi_berkas.php" class="active"><i class="lnr lnr-database"></i> <span>Informasi Berkas</span></a></li>
+						<li><a href="index.php" class="active"><i class="lnr lnr-home"></i> <span>Beranda</span></a></li>
+						<li><a href="informasi_berkas.php" class=""><i class="lnr lnr-database"></i> <span>Informasi Berkas</span></a></li>
 						<li>
 							<a href="#subFisik" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Berkas Fisik</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 							<div id="subFisik" class="collapse ">
@@ -185,96 +171,101 @@ if(isset($_GET['submit'])){
 					<!-- OVERVIEW -->
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title">Cari Data</h3>
-							<div class="right">
-								<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
-								<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
-							</div>
+							<h2 class="panel-title"><b>Detail Permohonan</b></h2>
+							<?php
+				                while($d = mysqli_fetch_array($data)){
+				            ?>
+				            <?php  
+				                $id_user = $d['id_user'];
+				                $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
+				                while ($row = $nama->fetch_assoc()) {
+				            ?>
+				            <small> Tanggal Pembuatan Permohonan <?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($d['date_created'])); echo " WIB";?></small>
 						</div>
 						<div class="panel-body">
-							<form class="" action="informasi_berkas.php" method="GET">
+							<form>
 								<div class="form-group row">
-            			<label for="no_berkas" class="col-sm-2 col-form-label">Nomor Berkas</label>
-            				<div class="col-sm-10">
-                			<input autocomplete="off" type="text" class="form-control" id="no_berkas" name="no_berkas" placeholder="Nomor Berkas" required>
-            				</div>
-        				</div>
-        				<div class="form-group row">
-            			<label for="desa" class="col-sm-2 col-form-label">Desa</label>
-            				<div class="col-sm-10">
-                			<input autocomplete="off" type="text" class="form-control" id="desa" name="desa" placeholder="Desa" required>
-            				</div>
-        				</div>
+            						<label for="nama_lengkap" class="col-sm-2 col-form-label">Nama Pemohon</label>
+            						<div class="col-sm-10">
+							            <input type="text" name="nama_lengkap" value="<?=$row['nama_lengkap'];?>" class="form-control" readonly/>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="kecamatan" class="col-sm-2 col-form-label">Kecamatan</label>
+            						<div class="col-sm-10">
+							              <input type="text" name="kecamatan" value="<?=$d['kecamatan'];?>" class="form-control"readonly/>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="desa" class="col-sm-2 col-form-label">Desa</label>
+            						<div class="col-sm-10">
+							              <input type="text" name="desa" value="<?=$d['desa'];?>" class="form-control"readonly/>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="alamat" class="col-sm-2 col-form-label">Alamat</label>
+            						<div class="col-sm-10">
+							              <textarea type="text" name="alamat" class="form-control" readonly><?=$d['alamat'];?></textarea>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="status" class="col-sm-2 col-form-label">Status</label>
+            						<div class="col-sm-10">
+							              <input type="text" name="status" value="<?=$d['status'];?>" class="form-control"readonly/>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="berita_acara" class="col-sm-2 col-form-label">Berita Acara</label>
+            						<div class="col-sm-10">
+                							<a style="width: 100%" class="btn btn-xs btn-success" id="berita_acara" name="berita_acara" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['berita_acara'];?>"><i class="fa fa-download"> Download File Berita Acara </i></a>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="risalah" class="col-sm-2 col-form-label">Risalah</label>
+            						<div class="col-sm-10">
+                							<a style="width: 100%" class="btn btn-xs btn-success" id="risalah" name="risalah" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['risalah'];?>"><i class="fa fa-download"> Download File Risalah </i></a>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="sktbma" class="col-sm-2 col-form-label">SKTBMA</label>
+            						<div class="col-sm-10">
+                							<a style="width: 100%" class="btn btn-xs btn-success" id="sktbma" name="sktbma" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['sktbma'];?>"><i class="fa fa-download"> Download File SKTBMA </i></a>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="s_permohonan" class="col-sm-2 col-form-label">Surat Permohonan</label>
+            						<div class="col-sm-10">
+                							<a style="width: 100%" class="btn btn-xs btn-success" id="s_permohonan" name="s_permohonan" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_permohonan'];?>"><i class="fa fa-download"> Download File Surat Permohonan </i></a>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="s_pernyataan" class="col-sm-2 col-form-label">Surat Pernyataan</label>
+            						<div class="col-sm-10">
+                							<a style="width: 100%" class="btn btn-xs btn-success" id="s_pernyataan" name="s_pernyataan" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_pernyataan'];?>"><i class="fa fa-download"> Download File Surat Pernyataan </i></a>
+            						</div>
+        						</div>
+        						<div class="form-group row">
+            						<label for="s_riwayat_tanah" class="col-sm-2 col-form-label">Surat Riwayat Tanah</label>
+            						<div class="col-sm-10">
+                							<a style="width: 100%" class="btn btn-xs btn-success" id="s_riwayat_tanah" name="s_riwayat_tanah" href="../pemohon/upload_file/<?=$d['id_permohonan'];?>/<?=$d['s_riwayat_tanah'];?>"><i class="fa fa-download"> Download File Surat Riwayat Tanah </i></a>
+            						</div>
+        						</div>
 								<div class="form-group row col-sm-10">
-            				<div class="col-sm-10">
-											<input type="submit" name="submit" class="btn btn-primary mt-sm-4" value="Cari Data">
-            				</div>
-        				</div>
+            						<div class="col-sm-10">		
+            							<a class="btn btn-sm btn-success" href="index.php" style="color: white;font-weight: bold;"><i class="fa fa-arrow-left"></i> Kembali</a></div>
+            						</div>
+        						</div>
 							</form>
+							<?php } ?>
+                			<?php } ?>
 						</div>
 					</div>
-
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title">Hasil Pencarian</h3>
-							<div class="right">
-								<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
-								<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
-							</div>
-						</div>
-						<div class="panel-body">
-							<div class="form-group row col-sm-10">
-									<div class="col-sm-10">
-											<p>Nama : <b><?=$nama;?></b></p>
-											<p>Desa : <b><?=$desa;?></b></p>
-											<p>Status : <b><?=$status;?></b></p>
-											<p>Nomor Hak Milik : <b><?=$no_hak;?></b></p>
-											<p>Nomor Sertifikat : <b><?=$no_sertifikat?></b></p>
-							</div>
-						</div>
-					</div>
-</div>
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title">Seluruh Informasi Berkas</h3>
-							<p class="panel-subtitle">Jumlah Seluruh Data : <?=$jumlahdata;?></p>
-							<div class="panel-body">
-								<table class="table table-bordered">
-									<thead>
-										<tr class="">
-											<th>Nama</th>
-											<th>Desa</th>
-											<th>Status</th>
-											<th>No Sertifikat</th>
-											<th>No Hak Milik</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										while ($d = mysqli_fetch_array($data)) {
-										?>
-										<tr>
-											<td><?=$d['nama'];?></td>
-											<td><?=$d['desa'];?></td>
-											<td><?=$d['status'];?></td>
-											<td><?=$d['no_sertifikat'];?></td>
-											<td><?=$d['no_hak'];?></td>
-										</tr>
-										<?php
-									}
-										?>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					</div>
-					<!-- END OVERVIEW -->
-				</div>
 			</div>
-	<!-- END WRAPPER -->
+			<!-- END MAIN CONTENT -->
+		</div>
+		
 	</div>
-	<div class="clearfix"></div>
+	<!-- END WRAPPER -->
 	<!-- Javascript -->
 	<script src="assets/vendor/jquery/jquery.min.js"></script>
 	<script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -282,6 +273,15 @@ if(isset($_GET['submit'])){
 	<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 	<script src="assets/vendor/chartist/js/chartist.min.js"></script>
 	<script src="assets/scripts/klorofil-common.js"></script>
+	<script src="../user/assets/vendor/datatables/jquery.dataTables.js"></script>
+	<script src="../user/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+	<script src="../user/assets/vendor/datatables/dataTables.bootstrap4.js"></script>
+	<script src="../user/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('#dataTables').DataTable();
+		} );
+	</script>
 	<script>
 	$(function() {
 		var data, options;
