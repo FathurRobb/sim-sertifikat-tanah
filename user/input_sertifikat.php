@@ -187,13 +187,24 @@ if(isset($_GET['pesan'])){
 							<div class="form-group row">
 								<label for="nama" class="col-sm-2 col-form-label">Nama</label>
 									<div class="col-sm-10">
-										<input autocomplete="off" type="text" class="form-control" id="nama" name="nama" placeholder="Nama">
+										<select class="form-control" name="nama" id="nama">	
+											<option disabled selected>Pilih Nama</option>
+												<?php
+													include 'data.php';
+													$sql = mysqli_query($connection,"SELECT * FROM user WHERE jabatan = 'Pemohon'");
+													while ($row=mysqli_fetch_array($sql)) {
+														echo '<option value="'.$row['id_user'].'">'.$row['nama_lengkap'].'</option>';
+													}
+												?>
+										</select>
 									</div>
 							</div>
         				<div class="form-group row">
             			<label for="desa" class="col-sm-2 col-form-label">Desa</label>
             				<div class="col-sm-10">
-                			<input autocomplete="off" type="text" class="form-control" id="desa" name="desa" placeholder="Desa" required>
+                				<select class="form-control" id="desa" name="desa">
+            						<option>Pilih Desa</option>
+            					</select>
             				</div>
         				</div>
 								<div class="form-group row">
@@ -249,6 +260,28 @@ if(isset($_GET['pesan'])){
 	<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 	<script src="assets/vendor/chartist/js/chartist.min.js"></script>
 	<script src="assets/scripts/klorofil-common.js"></script>
+	<script type="text/javascript"> 
+		$(document).ready(function()
+		{
+			$("#nama").change(function()
+			{
+				var id_user = $(this).val();
+				var post_id = 'id='+ id_user;
+			 
+				$.ajax
+				({
+					type: "POST",
+					url: "data.php",
+					data: post_id,
+					cache: false,
+					success: function(village)
+					{
+						$("#desa").html(village);
+					} 
+				});	 
+			});
+		});
+	</script>
 	<script>
 	$(function() {
 		var data, options;

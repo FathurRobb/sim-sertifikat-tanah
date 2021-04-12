@@ -234,17 +234,24 @@ if(isset($_GET['submit'])){
 											<th>Desa</th>
 											<th>No Sertifikat</th>
 											<th>No Hak Milik</th>
+											<th>Status</th>
 										</tr>
 									</thead>
 									<tbody>
 										<?php
 										while ($d = mysqli_fetch_array($query)) {
+											if ($d['status']=="Selesai") {
+												$label = "label-success";
+											}else{
+												$label = "label-warning";
+											}
 										?>
 										<tr>
 											<td><?=$d['nama'];?></td>
 											<td><?=$d['desa'];?></td>
 											<td><?=$d['no_sertifikat'];?></td>
 											<td><?=$d['no_hak'];?></td>
+											<td><span class="label <?=$label;?>"><?=$d['status'];?></span></td>
 										</tr>
 										<?php
 									}
@@ -274,12 +281,18 @@ if(isset($_GET['submit'])){
 									<tbody>
 										<?php
 										while ($d = mysqli_fetch_array($data20)) {
+											if ($d['status']=="Selesai") {
+												$label = "label-success";
+											}else{
+												$label = "label-warning";
+											}
 										?>
 										<tr>
 											<td><?=$d['nama'];?></td>
 											<td><?=$d['desa'];?></td>
 											<td><?=$d['no_sertifikat'];?></td>
 											<td><?=$d['no_hak'];?></td>
+											<td><span class="label <?=$label;?>"><?=$d['status'];?></span></td>
 										</tr>
 										<?php
 									}
@@ -306,12 +319,18 @@ if(isset($_GET['submit'])){
 									<tbody>
 										<?php
 										while ($d = mysqli_fetch_array($data19)) {
+											if ($d['status']=="Selesai") {
+												$label = "label-success";
+											}else{
+												$label = "label-warning";
+											}
 										?>
 										<tr>
 											<td><?=$d['nama'];?></td>
 											<td><?=$d['desa'];?></td>
 											<td><?=$d['no_sertifikat'];?></td>
 											<td><?=$d['no_hak'];?></td>
+											<td><span class="label <?=$label;?>"><?=$d['status'];?></span></td>
 										</tr>
 										<?php
 									}

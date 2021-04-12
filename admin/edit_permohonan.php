@@ -11,12 +11,41 @@ $ambilNotif = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif = '
 $jumlahNotif = mysqli_num_rows($ambilNotif);
 $id_permohonan = $_GET['id_permohonan'];
 $data = mysqli_query($connection, "SELECT p.id_permohonan, p.id_user, p.desa, p.kecamatan, p.alamat, p.status, p.notif, p.date_created, pf.berita_acara, pf.risalah, pf.sktbma, pf.s_permohonan, pf.s_pernyataan, pf.s_riwayat_tanah FROM permohonan AS p INNER JOIN pemohon_file AS pf ON p.id_permohonan = pf.id_permohonan WHERE p.id_permohonan='$id_permohonan'");
-
+                while($d = mysqli_fetch_array($data)){
 if(isset($_POST['update'])){
   $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
   $notif = "read";
   $sql = $connection->prepare("UPDATE permohonan SET status=?, notif=? WHERE id_permohonan=?");
   $sql->bind_param("sss", $status, $notif, $id_permohonan);
+  if ($status=="Disetujui") {
+    $q = mysqli_query($connection, "SELECT max(no_sertifikat) as kodeTerbesar FROM data_sertifikat");
+    $dataID = mysqli_fetch_array($q);
+    $no_sertifikat = $dataID['kodeTerbesar'];
+    // mengambil angka dari kode barang terbesar, menggunakan fungsi substr
+    // dan diubah ke integer dengan (int)
+    $urutan = (int) substr($no_sertifikat, 3, 3);
+   
+    // bilangan yang diambil ini ditambah 1 untuk menentukan nomor urut berikutnya
+    $urutan++;
+   
+    // membentuk kode barang baru
+    // perintah sprintf("%03s", $urutan); berguna untuk membuat string menjadi 3 karakter
+    // misalnya perintah sprintf("%03s", 15); maka akan menghasilkan '015'
+    // angka yang diambil tadi digabungkan dengan kode huruf yang kita inginkan, misalnya BRG 
+    $huruf = "ABA";
+    $no_sertifikat = $huruf . sprintf("%03s", $urutan);
+    $iu = $d['id_user'];
+    $n = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$iu");
+    while ($r= $n->fetch_assoc()) {
+              $nl = $r['nama_lengkap'];
+              $desa = $d['desa'];
+              $tahun = date('Y');
+    }
+              $query2 = "INSERT INTO  data_sertifikat (no_sertifikat, desa, tahun, nama, status) VALUES ('$no_sertifikat','$desa','$tahun','$nl','Belum')";
+              $q2 = mysqli_query($connection, $query2);
+    
+
+  }
   if($sql->execute()){
     echo '<script>alert("Data Berhasil Disimpan");window.location = "permohonan.php"</script>;';
   }else{
@@ -210,15 +239,13 @@ if(isset($_POST['update'])){
           <div class="w-full md:w-1/2 xl:w-1/2 p-3">
             <div class="bg-white border rounded shadow p-10">
                 <li class="list-none"><span class="text-xl font-bold">Detail Permohonan</span></li>
-                <?php
-                while($d = mysqli_fetch_array($data)){
-                ?>
+                
                 <?php  
                 $id_user = $d['id_user'];
                 $nama = mysqli_query($connection, "SELECT nama_lengkap FROM user WHERE id_user=$id_user");
                 while ($row = $nama->fetch_assoc()) {
               ?>
-              <small><i>Tanggal Pembuatan Permohonan <?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($i['date_created'])); echo " WIB";?></i></small>
+              <small><i>Tanggal Pembuatan Permohonan <?php setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID', 'en_US.UTF8', 'en_US.UTF-8', 'en_US.8859-1', 'en_US', 'American', 'ENG', 'English'); echo strftime('%d %B %Y, %H:%M',strtotime($d['date_created'])); echo " WIB";?></i></small>
               <form action="" method="POST" class="bg-white rounded mt-4">
 
                 <label for="id_permohonan" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">ID Permohonan</label>

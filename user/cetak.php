@@ -8,6 +8,7 @@ if(isset($_GET['submit'])){
 	$tahun = $_GET['tahun'];
 	$desa = $_GET['desa'];
 	$query = mysqli_query($connection, "SELECT * FROM data_fisik WHERE desa='$desa' AND tahun='$tahun'");
+	$judul = "Seluruh Berkas";
 	$subjudul = "";
 	$coba = "a";
 }else{
@@ -187,16 +188,26 @@ if(isset($_GET['submit'])){
         				<div class="form-group row">
             			<label for="desa" class="col-sm-2 col-form-label">Desa</label>
             				<div class="col-sm-10">
-                			<input autocomplete="off" type="text" class="form-control" id="desa" name="desa" placeholder="Desa" required>
+
+												<?php
+												    $sql="select * from data_fisik WHERE status='Selesai'";
+												    //$jsArray = "var dfTahun = new Array();\n";
+												    echo '<select class="form-control" name="desa" >';
+												    echo "<option disabled selected>Pilih Desa</option>";					
+													//Perintah sql untuk menampilkan semua data pada tabel jurusan
+												    $hasil=mysqli_query($connection,$sql);
+												    while ($data = mysqli_fetch_array($hasil)) {
+												 	echo '<option value="' . $data['desa'] . '">' . $data['desa'] . '</option>'; 
+												 	//$jsArray .= "dfTahun['" . $data['desa'] . "'] = {tahun:'" . addslashes($data['tahun']) ."'};\n";
+												}
+												echo '</select>';
+											  ?>
             				</div>
         				</div>
 								<div class="form-group row">
             			<label for="tahun" class="col-sm-2 col-form-label">Tahun</label>
             				<div class="col-sm-10">
-											<select class="form-control" name="tahun">
-												<option value="2020">2020</option>
-												<option value="2019">2019</option>
-											</select>
+            					<input autocomplete="off" type="text" class="form-control" id="tahun" name="tahun" placeholder="Tahun" required>
             				</div>
         				</div>
 								<div class="form-group row col-sm-10">
@@ -267,6 +278,14 @@ if(isset($_GET['submit'])){
 	<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 	<script src="assets/vendor/chartist/js/chartist.min.js"></script>
 	<script src="assets/scripts/klorofil-common.js"></script>
+	<!--
+	<script type="text/javascript">    
+    <?php echo $jsArray; ?>  
+    function changeValueDesa(x){  
+    document.getElementById('tahun').value = dfTahun[x].tahun;   
+    };  
+    
+    </script>--> 
 	<script>
 	$(function() {
 		var data, options;
