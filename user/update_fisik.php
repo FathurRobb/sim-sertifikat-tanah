@@ -6,10 +6,10 @@ if ($_SESSION['jabatan']=="") {
 }elseif ($_SESSION['jabatan']!="Yuridis"){
 	header('location:../core/403.php');
 }
-if (isset($_GET['no_sertifikat'])) {
-    $id = $_GET['no_sertifikat'];
+if (isset($_GET['no_berkas'])) {
+    $id = $_GET['no_berkas'];
   } else {
-    header('location:data_sertifikat.php');
+    header('location:data_fisik.php');
   }
 	$ambilNF = mysqli_query($connection,"SELECT * FROM permohonan WHERE notif_fisik = 'unread' ORDER BY id_permohonan ASC");
   	$jumlahNF = mysqli_num_rows($ambilNF);
@@ -22,17 +22,17 @@ if(isset($_GET['pesan'])){
     echo '<script>alert("Data Berhasil Disimpan");</script>';
   }elseif($pesan == 'gagal'){
     echo '<script>alert("Data Gagal Disimpan");</script>';
-  }elseif ($pesan == 'sertifikat') {
-	echo '<script>alert("No Sertifikat Telah Terdaftar");</script>';
+  }elseif ($pesan == 'fisik') {
+	echo '<script>alert("No Berkas Telah Terdaftar");</script>';
   }
 }
 
- $sql = "SELECT * FROM data_sertifikat WHERE no_sertifikat='$id'";
+ $sql = "SELECT * FROM data_fisik WHERE no_berkas='$id'";
   // tampung data (dalam array) kedalam variable $biodata
-  $sertifikat = mysqli_query($connection, $sql);
-  if (mysqli_num_rows($sertifikat) > 0) {
+  $fisik = mysqli_query($connection, $sql);
+  if (mysqli_num_rows($fisik) > 0) {
     // jika ada tampilkan kedalam tabel
-    $data = mysqli_fetch_assoc($sertifikat);
+    $data = mysqli_fetch_assoc($fisik);
   }
 ?>
 <!DOCTYPE html>
@@ -189,14 +189,20 @@ if(isset($_GET['pesan'])){
 					<!-- OVERVIEW -->
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title">Edit Data Sertifikat</h3>
+							<h3 class="panel-title">Edit Data Fisik</h3>
 							<div class="right">
 								<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
 								<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
 							</div>
 						</div>
 						<div class="panel-body">
-							<form class="" action="controller/update_sertifikat.php" method="POST">
+							<form class="" action="controller/update_fisik.php" method="POST">
+							<div class="form-group row">
+								<label for="no_berkas" class="col-sm-2 col-form-label">Nomor Berkas</label>
+									<div class="col-sm-10">
+										<input autocomplete="off" type="text" class="form-control" id="no_berkas" name="no_berkas" value="<?php echo $data['no_berkas']; ?>" required>
+									</div>
+							</div>
 							<div class="form-group row">
 								<label for="nama" class="col-sm-2 col-form-label">Nama</label>
 									<div class="col-sm-10">
@@ -209,11 +215,23 @@ if(isset($_GET['pesan'])){
                 			<input autocomplete="off" type="text" class="form-control" id="desa" name="desa" placeholder="Desa" value="<?php echo $data['desa']; ?>" required>
             				</div>
         				</div>
+        					<div class="form-group row">
+								<label for="nama" class="col-sm-2 col-form-label">Nomor Hak Milik</label>
+									<div class="col-sm-10">
+										<input autocomplete="off" type="text" class="form-control" id="no_hak" name="no_hak" value="<?php echo $data['no_hak']; ?>" required>
+									</div>
+							</div>
+        					<div class="form-group row">
+								<label for="nama" class="col-sm-2 col-form-label">Nomor Sertifikat</label>
+									<div class="col-sm-10">
+										<input autocomplete="off" type="text" class="form-control" id="no_sertifikat" name="no_sertifikat" value="<?php echo $data['no_sertifikat']; ?>" required>
+									</div>
+							</div>
 								<div class="form-group row">
             			<label for="tahun" class="col-sm-2 col-form-label">Tahun</label>
             				<div class="col-sm-10">
                                 <select class="form-control" name="tahun" required>
-                                	<option value="2019" <?php if($data['tahun']=="2019") echo 'selected="selected"'; ?>>2019</option>
+                                    <option value="2019" <?php if($data['tahun']=="2019") echo 'selected="selected"'; ?>>2019</option>
                                 	<option value="2020" <?php if($data['tahun']=="2020") echo 'selected="selected"'; ?>>2020</option>
                                 	<option value="2019" <?php if($data['tahun']=="2021") echo 'selected="selected"'; ?>>2021</option>
                                 	<option value="2019" <?php if($data['tahun']=="2022") echo 'selected="selected"'; ?>>2022</option>
@@ -224,17 +242,11 @@ if(isset($_GET['pesan'])){
             				</div>
         				</div>
 								<div class="form-group row">
-            			<label for="no_sertifikat" class="col-sm-2 col-form-label">Nomor Sertifikat</label>
-            				<div class="col-sm-10">
-                			<input autocomplete="off" type="text" class="form-control" id="no_sertifikat" name="no_sertifikat" placeholder="Nomor Sertifikat" value="<?php echo $data['no_sertifikat']; ?>" required>
-            				</div>
-        				</div>
-								<div class="form-group row">
             			<label for="status" class="col-sm-2 col-form-label">Status</label>
             				<div class="col-sm-10">
                                 <select class="form-control" name="status" required>
-                                    <option value="Selesai">Selesai</option>
-                                    <option value="Belum">Belum</option>
+                                	<option value="Selesai" <?php if($data['status']=="Selesai") echo 'selected="selected"'; ?>>Selesai</option>
+                                	<option value="Belum" <?php if($data['status']=="Belum") echo 'selected="selected"'; ?>>Belum</option>
                                 </select>
             				</div>
         				</div>

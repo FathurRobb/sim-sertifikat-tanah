@@ -219,8 +219,8 @@ if (isset($_POST['update'])) {
 
                 <label for="status" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Status</label>
 									<select class="mt-1 inline-block bg-gray-200 focus:border-green-500 focus:border-6 shadow-sm appearance-none border rounded w-full py-2 px-3 text-sm text-gray-700 leading-normal focus:outline-none mb-4" name="status">
-										<option value="Aktif">Selesai</option>
-										<option value="Tidak Aktif">Selesai</option>
+                    <option value="Belum" <?php if($d['status']=="Belum") echo 'selected="selected"'; ?>>Belum</option>
+                    <option value="Selesai" <?php if($d['status']=="Selesai") echo 'selected="selected"'; ?>>Selesai</option>
 									</select>
 
                 <label for="tahun" class="flex flex-wrap text-sm font-bold text-gray-500 leading-tight">Tahun</label>

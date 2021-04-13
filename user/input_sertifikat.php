@@ -187,18 +187,21 @@ if(isset($_GET['pesan'])){
 							<div class="form-group row">
 								<label for="nama" class="col-sm-2 col-form-label">Nama</label>
 									<div class="col-sm-10">
-										<select class="form-control" name="nama" id="nama">	
+										<select class="form-control" name="id_user" id="id_user" onchange="changeValueID(this.value)">
 											<option disabled selected>Pilih Nama</option>
 												<?php
 													include 'data.php';
 													$sql = mysqli_query($connection,"SELECT * FROM user WHERE jabatan = 'Pemohon'");
+												    $jsArray = "var dNama = new Array();\n";
 													while ($row=mysqli_fetch_array($sql)) {
 														echo '<option value="'.$row['id_user'].'">'.$row['nama_lengkap'].'</option>';
+												    	$jsArray .= "dNama['" . $row['id_user'] . "'] = {nama:'" . addslashes($row['nama_lengkap']) . "'};\n";
 													}
 												?>
 										</select>
 									</div>
 							</div>
+		                			<input autocomplete="off" type="hidden" class="form-control" id="nama" name="nama">
         				<div class="form-group row">
             			<label for="desa" class="col-sm-2 col-form-label">Desa</label>
             				<div class="col-sm-10">
@@ -211,20 +214,38 @@ if(isset($_GET['pesan'])){
             			<label for="tahun" class="col-sm-2 col-form-label">Tahun</label>
             				<div class="col-sm-10">
 											<select class="form-control" name="tahun">
-												<option value="2020">2019</option>
-												<option value="2019">2020</option>
-												<option value="2019">2021</option>
-												<option value="2019">2022</option>
-												<option value="2019">2023</option>
-												<option value="2019">2024</option>
-												<option value="2019">2025</option>
+												<option value="2019">2019</option>
+												<option value="2020">2020</option>
+												<option value="2021">2021</option>
+												<option value="2022">2022</option>
+												<option value="2023">2023</option>
+												<option value="2024">2024</option>
+												<option value="2025">2025</option>
 											</select>
             				</div>
         				</div>
 								<div class="form-group row">
+						<?php  
+							$q = mysqli_query($connection, "SELECT max(no_sertifikat) as kodeTerbesar FROM data_sertifikat");
+						    $dataID = mysqli_fetch_array($q);
+						    $no_sertifikat = $dataID['kodeTerbesar'];
+						    // mengambil angka dari kode barang terbesar, menggunakan fungsi substr
+						    // dan diubah ke integer dengan (int)
+						    $urutan = (int) substr($no_sertifikat, 3, 3);
+						   
+						    // bilangan yang diambil ini ditambah 1 untuk menentukan nomor urut berikutnya
+						    $urutan++;
+						   
+						    // membentuk kode barang baru
+						    // perintah sprintf("%03s", $urutan); berguna untuk membuat string menjadi 3 karakter
+						    // misalnya perintah sprintf("%03s", 15); maka akan menghasilkan '015'
+						    // angka yang diambil tadi digabungkan dengan kode huruf yang kita inginkan, misalnya BRG 
+						    $huruf = "ABA";
+						    $no_sertifikat = $huruf . sprintf("%03s", $urutan);
+						?>
             			<label for="no_sertifikat" class="col-sm-2 col-form-label">Nomor Sertifikat</label>
             				<div class="col-sm-10">
-                			<input autocomplete="off" type="text" class="form-control" id="no_sertifikat" name="no_sertifikat" placeholder="Nomor Sertifikat" required>
+                			<input autocomplete="off" type="text" class="form-control" id="no_sertifikat" name="no_sertifikat" value="<?php echo $no_sertifikat;?>" disabled>
             				</div>
         				</div>
 								<div class="form-group row">
@@ -260,10 +281,16 @@ if(isset($_GET['pesan'])){
 	<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 	<script src="assets/vendor/chartist/js/chartist.min.js"></script>
 	<script src="assets/scripts/klorofil-common.js"></script>
+	<script type="text/javascript">
+		<?php echo $jsArray; ?>  
+	    function changeValueID(x){  
+	    document.getElementById('nama').value = dNama[x].nama;   
+	    }; 
+	</script>
 	<script type="text/javascript"> 
 		$(document).ready(function()
 		{
-			$("#nama").change(function()
+			$("#id_user").change(function()
 			{
 				var id_user = $(this).val();
 				var post_id = 'id='+ id_user;

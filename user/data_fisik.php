@@ -6,6 +6,15 @@ if ($_SESSION['jabatan']=="") {
 }elseif ($_SESSION['jabatan']!="Yuridis"){
 	header('location:../core/403.php');
 }
+if(isset($_GET['pesan'])){
+  $pesan = $_GET['pesan'];
+  if($pesan == 'sukses'){
+    echo '<script>alert("Data Berhasil Diupdate");</script>';
+  }else{
+    echo '<script>alert("Data Gagal Diupdate");</script>';
+  }
+}
+
 $data20 = mysqli_query($connection, "SELECT * FROM data_fisik WHERE tahun='2020'");
 $data19 = mysqli_query($connection, "SELECT * FROM data_fisik WHERE tahun='2019'");
 $data18 = mysqli_query($connection, "SELECT * FROM data_fisik WHERE tahun='2018'");
@@ -226,6 +235,7 @@ if(isset($_GET['submit'])){
 						<div class="panel-heading">
 							<h3 class="panel-title"><?=$judul;?></h3>
 							<p class="panel-subtitle"<?=$subjudul;?>></p>
+						</div>
 							<div class="panel-body">
 								<table class="table table-bordered">
 									<thead>
@@ -235,6 +245,7 @@ if(isset($_GET['submit'])){
 											<th>No Sertifikat</th>
 											<th>No Hak Milik</th>
 											<th>Status</th>
+											<th>Aksi</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -242,9 +253,18 @@ if(isset($_GET['submit'])){
 										while ($d = mysqli_fetch_array($query)) {
 											if ($d['status']=="Selesai") {
 												$label = "label-success";
+												$value = "Sudah Selesai";
+												$button = "btn-warning disabled";
+												$onclick = "";
+												$link = "#";
 											}else{
 												$label = "label-warning";
+												$value = "Selesaikan";
+												$button = "btn-success";
+												$onclick = "return confirm('Konfirmasi Untuk Menyelesaikan Status?')";
+												$link = "controller/updatefisik.php?no_berkas=".$d['no_berkas'];
 											}
+											$link_edit = "update_fisik.php?no_berkas=".$d['no_berkas'];
 										?>
 										<tr>
 											<td><?=$d['nama'];?></td>
@@ -252,6 +272,14 @@ if(isset($_GET['submit'])){
 											<td><?=$d['no_sertifikat'];?></td>
 											<td><?=$d['no_hak'];?></td>
 											<td><span class="label <?=$label;?>"><?=$d['status'];?></span></td>
+											<td class="text-center">
+												<a href="<?=$link;?>">
+												<button onclick="<?=$onclick;?>" type="button" class="form-control btn <?=$button;?>" value=""><?=$value;?></button>
+											</a>
+											<a href="<?=$link_edit;?>">
+												<button type="button" class="form-control btn btn-warning" value="">Edit</button>
+											</a>
+											</td>
 										</tr>
 										<?php
 									}
@@ -276,6 +304,8 @@ if(isset($_GET['submit'])){
 											<th>Desa</th>
 											<th>No Sertifikat</th>
 											<th>No Hak Milik</th>
+											<th>Status</th>
+											<th>Aksi</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -283,9 +313,18 @@ if(isset($_GET['submit'])){
 										while ($d = mysqli_fetch_array($data20)) {
 											if ($d['status']=="Selesai") {
 												$label = "label-success";
+												$value = "Sudah Selesai";
+												$button = "btn-warning disabled";
+												$onclick = "";
+												$link = "#";
 											}else{
 												$label = "label-warning";
+												$value = "Selesaikan";
+												$button = "btn-success";
+												$onclick = "return confirm('Konfirmasi Untuk Menyelesaikan Status?')";
+												$link = "controller/updatefisik.php?no_berkas=".$d['no_berkas'];
 											}
+											$link_edit = "update_fisik.php?no_berkas=".$d['no_berkas'];
 										?>
 										<tr>
 											<td><?=$d['nama'];?></td>
@@ -293,6 +332,14 @@ if(isset($_GET['submit'])){
 											<td><?=$d['no_sertifikat'];?></td>
 											<td><?=$d['no_hak'];?></td>
 											<td><span class="label <?=$label;?>"><?=$d['status'];?></span></td>
+											<td class="text-center">
+												<a href="<?=$link;?>">
+												<button onclick="<?=$onclick;?>" type="button" class="form-control btn <?=$button;?>" value=""><?=$value;?></button>
+											</a>
+											<a href="<?=$link_edit;?>">
+												<button type="button" class="form-control btn btn-warning" value="">Edit</button>
+											</a>
+											</td>
 										</tr>
 										<?php
 									}
@@ -306,6 +353,7 @@ if(isset($_GET['submit'])){
 						<div class="panel-heading">
 							<h3 class="panel-title">Seluruh Informasi Berkas Tahun 2019</h3>
 							<p class="panel-subtitle">Jumlah Seluruh Data : <?=$jumlahdata19;?></p>
+						</div>
 							<div class="panel-body">
 								<table class="table table-bordered">
 									<thead>
@@ -314,6 +362,8 @@ if(isset($_GET['submit'])){
 											<th>Desa</th>
 											<th>No Sertifikat</th>
 											<th>No Hak Milik</th>
+											<th>Status</th>
+											<th>Aksi</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -321,9 +371,18 @@ if(isset($_GET['submit'])){
 										while ($d = mysqli_fetch_array($data19)) {
 											if ($d['status']=="Selesai") {
 												$label = "label-success";
+												$value = "Sudah Selesai";
+												$button = "btn-warning disabled";
+												$onclick = "";
+												$link = "#";
 											}else{
 												$label = "label-warning";
+												$value = "Selesaikan";
+												$button = "btn-success";
+												$onclick = "return confirm('Konfirmasi Untuk Menyelesaikan Status?')";
+												$link = "controller/updatefisik.php?no_berkas=".$d['no_berkas'];
 											}
+											$link_edit = "update_fisik.php?no_berkas=".$d['no_berkas'];
 										?>
 										<tr>
 											<td><?=$d['nama'];?></td>
@@ -331,6 +390,14 @@ if(isset($_GET['submit'])){
 											<td><?=$d['no_sertifikat'];?></td>
 											<td><?=$d['no_hak'];?></td>
 											<td><span class="label <?=$label;?>"><?=$d['status'];?></span></td>
+											<td class="text-center">
+												<a href="<?=$link;?>">
+												<button onclick="<?=$onclick;?>" type="button" class="form-control btn <?=$button;?>" value=""><?=$value;?></button>
+											</a>
+											<a href="<?=$link_edit;?>">
+												<button type="button" class="form-control btn btn-warning" value="">Edit</button>
+											</a>
+											</td>
 										</tr>
 										<?php
 									}
