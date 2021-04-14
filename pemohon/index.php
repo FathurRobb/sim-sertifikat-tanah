@@ -32,20 +32,18 @@ if ($_SESSION['jabatan']=="") {
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js" integrity="sha256-XF29CBwU1MWLaGEnsELogU6Y6rcc5nCkhhx89nFMIDQ=" crossorigin="anonymous"></script>
 </head>
-<style type="text/css">
-	body { 
-    padding-top: 75px; 
-}
-</style>
 <body>
 	<!-- WRAPPER -->
-	<div>
+	<div id="wrapper">
 		<!-- NAVBAR -->
 		<nav class="navbar navbar-default navbar-fixed-top">
 			<div class="brand">
 				<a href="index.php" class="logo"><b>PENGAJUAN DATA SERTIFIKAT </b><br> <center> KABUPATEN BANDUNG </center></a>
 			</div>
 			<div class="container-fluid">
+				<div class="navbar-btn">
+					<button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
+				</div>
 				<div id="navbar-menu">
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
@@ -66,6 +64,18 @@ if ($_SESSION['jabatan']=="") {
 			</div>
 		</nav>
 		<!-- END NAVBAR -->
+		<!-- LEFT SIDEBAR -->
+		<div id="sidebar-nav" class="sidebar">
+			<div class="sidebar-scroll">
+				<nav>
+					<ul class="nav">
+						<li><a href="index.php" class="active"><i class="lnr lnr-home"></i> <span>Beranda</span></a></li>
+						<li><a href="informasi_berkas.php" class=""><i class="lnr lnr-database"></i> <span>Informasi Berkas</span></a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		<!-- END LEFT SIDEBAR -->
 		<!-- MAIN -->
 		<div class="main">
 			<!-- MAIN CONTENT -->
@@ -246,6 +256,7 @@ if ($_SESSION['jabatan']=="") {
 	<script src="../user/assets/vendor/datatables/jquery.dataTables.min.js"></script>
 	<script src="../user/assets/vendor/datatables/dataTables.bootstrap4.js"></script>
 	<script src="../user/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+	<script src="../user/assets/scripts/klorofil-common.js"></script>
 	<script>
 		$(document).ready(function() {
 			$('#dataTables').DataTable({
@@ -255,6 +266,7 @@ if ($_SESSION['jabatan']=="") {
 			});
 		} );
 	</script>
+
 </body>
 
 </html>
